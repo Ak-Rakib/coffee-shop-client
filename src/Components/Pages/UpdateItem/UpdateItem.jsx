@@ -1,45 +1,64 @@
 // eslint-disable-next-line no-unused-vars
 import React from "react";
-import Swal from 'sweetalert2'
+import { Link, useLoaderData } from "react-router-dom";
+import Swal from "sweetalert2";
 
-const AddItem = () => {
+const UpdateItem = () => {
+  const loaderData = useLoaderData();
 
-    const dataSubmitHandler = event => {
-        event.preventDefault()
-        const form = event.target;
-        const name = form.name.value;
-        const chef = form.chef.value;
-        const supplier = form.supplier.value;
-        const Details = form.Details.value;
-        const taste = form.taste.value;
-        const category = form.category.value;
-        const photoURL = form.photoURL.value;
+  const { _id, name, chef, supplier, Details, taste, category, photoURL } =
+    loaderData;
 
-        const formData = {name, chef, supplier, Details, taste, category, photoURL};
-        console.log(formData);
+  const updateCoffeeHandler = (event) => {
+    event.preventDefault();
+    const form = event.target;
+    const name = form.name.value;
+    const chef = form.chef.value;
+    const supplier = form.supplier.value;
+    const Details = form.Details.value;
+    const taste = form.taste.value;
+    const category = form.category.value;
+    const photoURL = form.photoURL.value;
 
-        fetch('http://localhost:5000/coffee', {
-            method: "POST",
-            headers: {
-                "content-type" : "application/json"
-            },
-            body: JSON.stringify(formData)
-        })
-        .then(res => res.json())
-        .then(data => {
-            console.log(data);
-            Swal.fire({
-                title: 'success!',
-                text: 'Coffee Item Added',
-                icon: 'success',
-                confirmButtonText: 'Cool'
-              })
-        });
-    }
+    const updatedFormData = {
+      name,
+      chef,
+      supplier,
+      Details,
+      taste,
+      category,
+      photoURL,
+    };
+    console.log(updatedFormData);
+
+    fetch(`http://localhost:5000/coffee/${_id}`, {
+      method: "PUT",
+      headers: {
+        "content-type": "application/json",
+      },
+      body: JSON.stringify(updatedFormData),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        if (data.modifiedCount > 0) {
+          Swal.fire({
+            title: "success!",
+            text: "Coffee update successfully",
+            icon: "success",
+            confirmButtonText: "Cool",
+          });
+        }
+      });
+  };
+
   return (
     <div className="bg-[#ede2db] md:p-20 p-10">
-        <h1 className="text-center text-3xl pb-5 font-bold">Please Add Item</h1>
-      <form onSubmit={dataSubmitHandler} className=" rounded">
+      <h1 className="text-center text-3xl pb-5 font-bold">
+        Please Update Coffee here
+      </h1>
+      <h1 className="text-center text-xl pb-5 font-bold">{name}</h1>
+      <form onSubmit={updateCoffeeHandler} className=" rounded">
         <div className="md:flex md:justify-around">
           <div className="">
             <div className="mb-4">
@@ -50,6 +69,7 @@ const AddItem = () => {
                 name="name"
                 placeholder="item name"
                 className="w-full p-2 border rounded-md"
+                defaultValue={name}
               />
             </div>
             <div className="mb-4">
@@ -60,6 +80,7 @@ const AddItem = () => {
                 name="chef"
                 placeholder="your name"
                 className="w-full p-2 border rounded-md"
+                defaultValue={chef}
               />
             </div>
             <div className="mb-4">
@@ -72,6 +93,7 @@ const AddItem = () => {
                 name="supplier"
                 placeholder="supplier"
                 className="w-full p-2 border rounded-md"
+                defaultValue={supplier}
               />
             </div>
             <div className="mb-4">
@@ -84,6 +106,7 @@ const AddItem = () => {
                 name="Details"
                 placeholder="Details"
                 className="w-full p-2 border rounded-md"
+                defaultValue={Details}
               />
             </div>
           </div>
@@ -98,6 +121,7 @@ const AddItem = () => {
                 name="taste"
                 placeholder="taste"
                 className="w-full p-2 border rounded-md"
+                defaultValue={taste}
               />
             </div>
             <div className="mb-4">
@@ -109,6 +133,7 @@ const AddItem = () => {
                 name="category"
                 placeholder="category"
                 className="w-full p-2 border rounded-md"
+                defaultValue={category}
               ></input>
             </div>
             <div className="mb-4">
@@ -121,6 +146,7 @@ const AddItem = () => {
                 name="photoURL"
                 placeholder="item photo"
                 className="w-full p-2 border rounded-md"
+                defaultValue={photoURL}
               />
             </div>
           </div>
@@ -131,8 +157,15 @@ const AddItem = () => {
           </button>
         </div>
       </form>
+      <div className="mb-4 text-center">
+        <Link to='/'>
+          <button type="submit" className="btn btn-outline w-1/4">
+            Back Home
+          </button>
+        </Link>
+      </div>
     </div>
   );
 };
 
-export default AddItem;
+export default UpdateItem;
